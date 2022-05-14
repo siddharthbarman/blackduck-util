@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bdreport", "bdstatus\bdreport.csproj", "{78CD827B-4701-4858-B7E6-4F7D010DCFCE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlackDuckAPI", "BlackDuckAPI\BlackDuckAPI.csproj", "{E6ED7642-4F5F-449D-9463-C18B2BD3A6FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78CD827B-4701-4858-B7E6-4F7D010DCFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78CD827B-4701-4858-B7E6-4F7D010DCFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78CD827B-4701-4858-B7E6-4F7D010DCFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78CD827B-4701-4858-B7E6-4F7D010DCFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6ED7642-4F5F-449D-9463-C18B2BD3A6FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6ED7642-4F5F-449D-9463-C18B2BD3A6FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6ED7642-4F5F-449D-9463-C18B2BD3A6FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6ED7642-4F5F-449D-9463-C18B2BD3A6FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ABEA547C-A3B5-41EC-A451-7048EA5E077E}
+	EndGlobalSection
+EndGlobal
