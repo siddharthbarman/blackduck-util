@@ -4,6 +4,7 @@ using SByteStream.BlackDuck.API.PublicModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,20 +18,62 @@ namespace SByteStream.BlackDuck
 			m_token = token;			
 		}
 
+		private string GetReportLine(Tuple<BDProject, RiskProfile> row)
+		{
+			BDProject bdProject = row.Item1;
+			RiskProfile riskProfile = row.Item2;
+			
+			StringBuilder sb = new StringBuilder();
+			sb.Append($"\"{bdProject.Name}\",\"{bdProject.Version}\",");
+			sb.Append($"\"{riskProfile.Categories.Vulnerability.Critical}\",\"{riskProfile.Categories.Vulnerability.High}\",");
+			sb.Append($"\"{riskProfile.Categories.Vulnerability.Medium}\",\"{riskProfile.Categories.Vulnerability.Low}\",");
+			sb.Append($"\"{riskProfile.Categories.License.High}\",\"{riskProfile.Categories.License.Medium}\",");
+			sb.Append($"\"{riskProfile.Categories.License.Low}\",\"{riskProfile.Categories.Operational.High}\",");
+			sb.Append($"\"{riskProfile.Categories.Operational.Medium}\",\"{riskProfile.Categories.Operational.Low}\"");
+
+			for(int n=0; n < bdProject.Tags.Count; n++)
+			{
+				sb.Append($",\"{bdProject.Tags[n]}\"");
+			}
+			
+			return sb.ToString();
+		}
+
+		private string GetReportHeaderLine(Tuple<BDProject, RiskProfile> row)
+		{
+			BDProject bdProject = row.Item1;
+			RiskProfile riskProfile = row.Item2;
+			if (bdProject.Tags.Count == 0)
+			{
+				return STD_HEADER_FIELDS;
+			}
+			else
+			{
+				StringBuilder sb = new StringBuilder(STD_HEADER_FIELDS);
+				for(int n=0; n < bdProject.Tags.Count; n++)
+				{
+					sb.Append($",\"Custom{n}\"");
+				}
+				return sb.ToString();
+			}
+		}
+
 		public void GenerateStatusReport(List<BDProject> projects, string reportFile)
 		{
 			var result = GetRiskProfiles(projects);
 			object _lock = new object();
+			bool firstRow = true;
 
 			using (StreamWriter sw = new StreamWriter(reportFile))
 			{
-				sw.WriteLine("\"Project\",\"Version\",\"Security Critical\",\"Security High\",\"Security Medium\",\"Security Low\",\"License High\",\"License Medium\",\"License Low\",\"Operational High\",\"Operational Medium\",\"Operational Low\"");
-
 				foreach(var row in result.Item1)
 				{					
-					BDProject bdProject = row.Item1;
-					RiskProfile riskProfile = row.Item2;						
-					sw.WriteLine($"\"{bdProject.Name}\",\"{bdProject.Version}\",\"{riskProfile.Categories.Vulnerability.Critical}\",\"{riskProfile.Categories.Vulnerability.High}\",\"{riskProfile.Categories.Vulnerability.Medium}\",\"{riskProfile.Categories.Vulnerability.Low}\",\"{riskProfile.Categories.License.High}\",\"{riskProfile.Categories.License.Medium}\",\"{riskProfile.Categories.License.Low}\",\"{riskProfile.Categories.Operational.High}\",\"{riskProfile.Categories.Operational.Medium}\",\"{riskProfile.Categories.Operational.Low}\"");
+					if (firstRow)
+					{
+						sw.WriteLine(GetReportHeaderLine(row));
+						firstRow = false;
+					}
+					sw.WriteLine(GetReportLine(row));
 				}
 			}
 
@@ -91,12 +134,7 @@ namespace SByteStream.BlackDuck
 					lock (_lock)
 					{
 						reports.Add(new Tuple<BDProject, string>(_project, report));
-					}
-
-					int percent = count * 100 / projects.Count;
-					Console.CursorLeft = left;
-					Console.Write(string.Format("{0}%", percent));
-					count++;
+					}					
 				}
 				catch (Exception e)
 				{
@@ -104,6 +142,13 @@ namespace SByteStream.BlackDuck
 					{
 						errors.Add(new Tuple<BDProject, Exception>(_project, e));
 					}
+				}
+				finally
+				{
+					int percent = count * 100 / projects.Count;
+					Console.CursorLeft = left;
+					Console.Write(string.Format("{0}%", percent));
+					Interlocked.Increment(ref count);					
 				}
 			});			
 
@@ -187,5 +232,6 @@ namespace SByteStream.BlackDuck
 				
 		private string m_url;
 		private string m_token;
+		private const string STD_HEADER_FIELDS = "\"Project\",\"Version\",\"Security Critical\",\"Security High\",\"Security Medium\",\"Security Low\",\"License High\",\"License Medium\",\"License Low\",\"Operational High\",\"Operational Medium\",\"Operational Low\"";
 	}
 }

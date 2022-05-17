@@ -32,9 +32,15 @@ namespace SByteStream.BlackDuck
 					string[] parts = line.Split(':');
 					BDProject project = new BDProject
 					{
-						Name = parts[0],
-						Version = parts[1]
+						Name = parts[0].Trim(),
+						Version = parts[1].Trim()
 					};
+
+					for(int n=2; n < parts.Length; n++)
+					{
+						project.Tags.Add(parts[n].Trim());
+					}
+
 					result.Add(project);
 				}
 			}
